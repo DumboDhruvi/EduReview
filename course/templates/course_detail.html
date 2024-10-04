@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.course_name }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        <div class="nav-right">
+            {% if user %}
+                <div class="dropdown">
+                    <button class="dropbtn">Hi, {{ user.username }}</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Signup</a>
+            {% endif %}
+        </div>
+    </header>
+    <div class="course-details">
+        <p><strong>Length:</strong> {{ course.course_length }} hours</p>
+        <p><strong>Price:</strong> ₹{{ course.course_price }}</p>
+        <p><strong>Start Date:</strong> {{ course.start_date }}</p>
+        <p><strong>End Date:</strong> {{ course.end_date }}</p>
+        <p><strong>Institute:</strong> {{ course.institute.name }}</p>
+        <p><strong>Subjects:</strong> {% for subject in course.subjects.all %} {{ subject.name }} {% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        <p><strong>Average Rating: </strong> {{ average_rating|floatformat:1|default:"No Ratings Yet" }} </p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="review-form">
+        <h2>Submit Your Review</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit" name="review">Submit Review</button>
+        </form>
+    </div>
+    {% else %}
+    <p>You need to <a href="{% url 'login' %}">log in</a> to submit a review.</p>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Reviews</h3>
+            <ul>
+                {% for review in reviews %}  <!-- Limit to first 5 reviews -->
+                    <li>
+                        <strong>{{ review.user.username }}:</strong>
+                        <span>{{ review.rating }} stars</span>
+                        <p>{{ review.comment }}</p>
+                        <small>{{ review.created_at }}</small>
+                    </li>
+                {% empty %}
+                    <li>No reviews yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h3>Discussions</h3>
+            <ul>
+                {% for discussion in discussions %}  <!-- Limit to first 5 discussions -->
+                    <li>
+                        <strong>{{ discussion.user }}:</strong>
+                        <p>{{ discussion.content }}</p>
+                        <small>{{ discussion.created_at }}</small>
+                    </li>
+                {% empty %}
+                    <li>No discussions yet.</li>
+                {% endfor %}
+            </ul>
+            <form method="post">
+                {% csrf_token %}
+                {{ discussion_form.as_p }}
+                <button type="submit" name="discussion">Submit Discussion</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

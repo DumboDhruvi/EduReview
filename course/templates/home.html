@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eduReview - Home</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        nav {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        .nav-left a {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .nav-right {
+            float: right;
+        }
+        .dropdown {
+            display: inline-block;
+            position: relative;
+        }
+        .dropbtn {
+            background-color: #343a40;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(1,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            color: black;
+        }
+        form {
+            margin: 20px 0;
+            text-align: center;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            margin: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: black;
+        }
+        .sources-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-left">
+            <a href="/">EduReview</a>
+        </div>
+        <div class="nav-right">
+            {% if user %}
+                <div class="dropdown">
+                    <button class="dropbtn">Hi, {{ user.username }}</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Signup</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Body -->
+    <div class="container">
+        <form method="get" action="{% url 'search' %}">
+            <input type="text" name="query" placeholder="Search for courses..." />
+            <select name="mode">
+                <option value="text">Search by Course Name</option>
+                <option value="subject">Search by Subject</option>
+                <option value="institution">Search by Institution</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- College/Source Section -->
+        
+            <div class="subject-links">
+                <h3>Explore Subjects</h3>
+                {% for subject in subjects %}
+                    <a href="{% url 'search' %}?query={{ subject }}&mode=subject">{{ subject }}</a>
+                {% endfor %}
+            </div>
+    
+            <!-- Add similar structure for colleges/sites -->
+        
+    </div>
+
+</body>
+</html>

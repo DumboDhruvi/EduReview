@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <h1>Search Courses</h1>
+    
+    <!-- Display Search Box if No Query -->
+    <form method="get" action="">
+        <input type="text" name="query" placeholder="Search for courses..." value="{{ query }}" />
+        <select name="mode">
+            <option value="text" {% if mode == 'text' %}selected{% endif %}>Search by Course Name</option>
+            <option value="subject" {% if mode == 'subject' %}selected{% endif %}>Search by Subject</option>
+            <option value="institution" {% if mode == 'institution' %}selected{% endif %}>Search by Institution</option>
+        </select>
+        <button type="submit">Search</button>
+    </form>
+    
+    <!-- Display Results if Query Exists -->
+    {% if query %}
+        <h2>Search Results for "{{ query }}"</h2>
+        <ul>
+            {% for course in courses %}
+  <div>
+    <a href="{% url 'course_detail' course.course_name %}">
+    {{ course.course_name }}</a>
+    <p><strong>Subject:</strong> {{ course.subject.name }}</p>
+    <p><strong>Price:</strong> {{ course.course_price }}</p>
+  </div>
+{% empty %}
+  <p>No courses found.</p>
+{% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
